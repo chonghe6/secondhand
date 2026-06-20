@@ -3,6 +3,7 @@ const RECOMMENDATION_VERSION = 3;
 const DATE_RANGE_VERSION = 1;
 const SALE_START_DATE = "2026-06-19";
 const SALE_END_DATE = "2026-07-20";
+const IS_EDITABLE = location.protocol === "file:" || ["localhost", "127.0.0.1"].includes(location.hostname);
 const ITEM_EDITABLE_FIELDS = ["image", "salePrice", "status", "start", "end", "note"];
 const LEGACY_DEFAULT_SALE_PRICES = {
   dell_monitor_1: ["$130", "$150"],
@@ -218,9 +219,14 @@ const items = [
 
 let state = loadState();
 let activeFilter = "all";
+document.body.classList.toggle("editable-mode", IS_EDITABLE);
+document.body.classList.toggle("read-only-mode", !IS_EDITABLE);
 
 function loadState() {
   const fallback = { info: { ...baseInfo }, items: cloneItems(items) };
+  if (!IS_EDITABLE) {
+    return fallback;
+  }
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "");
     const migrateLegacySalePrices = saved.recommendationVersion !== RECOMMENDATION_VERSION;
@@ -270,6 +276,10 @@ function pickItemEdits(
 }
 
 function persist() {
+  if (!IS_EDITABLE) {
+    updateSummary();
+    return;
+  }
   const saved = {
     recommendationVersion: RECOMMENDATION_VERSION,
     dateRangeVersion: DATE_RANGE_VERSION,
@@ -281,9 +291,11 @@ function persist() {
 }
 
 function renderInfo() {
-  document.querySelectorAll("[contenteditable][data-key]").forEach((node) => {
+  document.querySelectorAll("[data-key]").forEach((node) => {
     const key = node.dataset.key;
     node.textContent = state.info[key] || "";
+    if (!IS_EDITABLE) return;
+    node.setAttribute("contenteditable", "true");
     node.addEventListener("input", () => {
       state.info[key] = node.textContent.trim();
       persist();
@@ -306,6 +318,7 @@ function renderGallery() {
       const image = node.querySelector(".item-image");
       image.src = item.image;
       image.alt = item.title;
+      node.querySelector(".image-replace").hidden = !IS_EDITABLE;
 
       node.querySelector(".item-title").textContent = item.title;
       node.querySelector(".match-line").textContent = `Match: ${item.match}`;
@@ -318,43 +331,68 @@ function renderGallery() {
 
       const salePrice = node.querySelector(".sale-price");
       salePrice.value = item.salePrice;
-      salePrice.addEventListener("input", () => updateItem(item.id, { salePrice: salePrice.value }));
+      setFieldMode(salePrice);
+      if (IS_EDITABLE) {
+        salePrice.addEventListener("input", () => updateItem(item.id, { salePrice: salePrice.value }));
+      }
 
       const start = node.querySelector(".date-start");
       start.value = item.start;
-      start.addEventListener("input", () => updateItem(item.id, { start: start.value }));
+      setFieldMode(start);
+      if (IS_EDITABLE) {
+        start.addEventListener("input", () => updateItem(item.id, { start: start.value }));
+      }
 
       const end = node.querySelector(".date-end");
       end.value = item.end;
-      end.addEventListener("input", () => updateItem(item.id, { end: end.value }));
+      setFieldMode(end);
+      if (IS_EDITABLE) {
+        end.addEventListener("input", () => updateItem(item.id, { end: end.value }));
+      }
 
       const note = node.querySelector(".note-input");
       note.value = item.note;
-      note.addEventListener("input", () => updateItem(item.id, { note: note.value }));
+      setFieldMode(note);
+      if (!IS_EDITABLE) {
+        node.querySelector(".note-field span").textContent = "Note";
+        node.querySelector(".note-field").hidden = !item.note.trim();
+      } else {
+        note.addEventListener("input", () => updateItem(item.id, { note: note.value }));
+      }
 
       const statusButton = node.querySelector(".status-toggle");
       statusButton.textContent = item.status === "sold" ? "Sold" : "Available";
-      statusButton.addEventListener("click", () => {
-        const current = state.items.find((entry) => entry.id === item.id)?.status || "available";
-        const next = current === "sold" ? "available" : "sold";
-        updateItem(item.id, { status: next });
-        renderGallery();
-      });
-
-      const imageInput = node.querySelector(".image-input");
-      imageInput.addEventListener("change", () => {
-        const file = imageInput.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          updateItem(item.id, { image: String(reader.result || item.image) });
+      statusButton.disabled = !IS_EDITABLE;
+      if (IS_EDITABLE) {
+        statusButton.addEventListener("click", () => {
+          const current = state.items.find((entry) => entry.id === item.id)?.status || "available";
+          const next = current === "sold" ? "available" : "sold";
+          updateItem(item.id, { status: next });
           renderGallery();
         });
-        reader.readAsDataURL(file);
-      });
+      }
+
+      const imageInput = node.querySelector(".image-input");
+      if (IS_EDITABLE) {
+        imageInput.addEventListener("change", () => {
+          const file = imageInput.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            updateItem(item.id, { image: String(reader.result || item.image) });
+            renderGallery();
+          });
+          reader.readAsDataURL(file);
+        });
+      }
 
       gallery.appendChild(node);
     });
+}
+
+function setFieldMode(input) {
+  input.readOnly = !IS_EDITABLE;
+  input.tabIndex = IS_EDITABLE ? 0 : -1;
 }
 
 function updateItem(id, patch) {

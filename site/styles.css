@@ -369,6 +369,36 @@ input[readonly] {
   background: #f5f5f3;
 }
 
+.read-only-mode [contenteditable],
+.read-only-mode input {
+  cursor: default;
+}
+
+.read-only-mode .image-replace {
+  display: none;
+}
+
+.read-only-mode .status-toggle:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.read-only-mode .sale-price[readonly],
+.read-only-mode .amazon-price[readonly],
+.read-only-mode .date-start[readonly],
+.read-only-mode .date-end[readonly],
+.read-only-mode .note-input[readonly] {
+  pointer-events: none;
+  color: var(--text);
+  background: #fff;
+  border-color: var(--soft-line);
+}
+
+.read-only-mode input:focus {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
 @media (max-width: 940px) {
   .page {
     width: min(100% - 32px, 720px);
