@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Move-Out Sale</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="site-header">
+        <div class="title-row">
+          <h1 contenteditable="true" data-key="pageTitle" data-placeholder="Move-Out Sale">Move-Out Sale</h1>
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="Gallery controls">
+        <h2>Move-Out Sale Gallery</h2>
+        <div class="filters" role="group" aria-label="Status filter">
+          <button class="filter active" data-filter="all">All</button>
+          <button class="filter" data-filter="available">Available</button>
+          <button class="filter" data-filter="sold">Sold</button>
+        </div>
+      </section>
+
+      <section class="summary" aria-label="Sale summary">
+        <div>
+          <span class="summary-value" id="totalCount">0</span>
+          <span class="summary-label">items</span>
+        </div>
+        <div>
+          <span class="summary-value" id="availableCount">0</span>
+          <span class="summary-label">available</span>
+        </div>
+        <div>
+          <span class="summary-value" id="soldCount">0</span>
+          <span class="summary-label">sold</span>
+        </div>
+      </section>
+
+      <section id="gallery" class="gallery" aria-label="Items"></section>
+    </main>
+
+    <template id="itemTemplate">
+      <article class="item-card">
+        <div class="image-wrap">
+          <img class="item-image" alt="" />
+          <label class="image-replace">
+            Image
+            <input class="image-input hidden-input" type="file" accept="image/*,.heic,.HEIC" />
+          </label>
+        </div>
+        <div class="card-body">
+          <div class="card-topline">
+            <h3 class="item-title"></h3>
+            <button class="status-toggle" type="button"></button>
+          </div>
+          <p class="match-line"></p>
+          <a class="amazon-link" target="_blank" rel="noreferrer">Amazon</a>
+          <div class="price-row">
+            <label>
+              <span>Original price</span>
+              <input class="amazon-price" readonly />
+            </label>
+            <label>
+              <span>Sale price</span>
+              <input class="sale-price" inputmode="decimal" placeholder="$" />
+            </label>
+          </div>
+          <div class="date-row">
+            <label>
+              <span>Start</span>
+              <input class="date-start" type="date" />
+            </label>
+            <label>
+              <span>End</span>
+              <input class="date-end" type="date" />
+            </label>
+          </div>
+          <label class="note-field">
+            <span>Buyer / note</span>
+            <input class="note-input" />
+          </label>
+        </div>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+IMG_*.jpeg
+IMG_*.HEIC
+output/
+tmp/
+.DS_Store
