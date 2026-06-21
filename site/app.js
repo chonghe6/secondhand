@@ -1,10 +1,20 @@
 const STORAGE_KEY = "move-out-sale-v1";
 const RECOMMENDATION_VERSION = 3;
 const DATE_RANGE_VERSION = 1;
+const STATUS_VERSION = 1;
 const SALE_START_DATE = "2026-06-19";
 const SALE_END_DATE = "2026-07-20";
 const IS_EDITABLE = location.protocol === "file:" || ["localhost", "127.0.0.1"].includes(location.hostname);
 const ITEM_EDITABLE_FIELDS = ["image", "salePrice", "status", "start", "end", "note"];
+const STATUSES = ["available", "reserved", "sold"];
+const STATUS_LABELS = {
+  available: "Available",
+  reserved: "Reserved",
+  sold: "Sold",
+};
+const LEGACY_DEFAULT_STATUSES = {
+  portable_ac: ["available"],
+};
 const LEGACY_DEFAULT_SALE_PRICES = {
   dell_monitor_1: ["$130", "$150"],
   dell_monitor_2: ["$130"],
@@ -197,7 +207,7 @@ const items = [
     salePrice: "$108",
     amazonUrl: "https://www.amazon.com/dp/B0GST71ZLV",
     match: "Similar Amazon item; photo label shows 10,000 BTU / 6,000 SACC",
-    status: "available",
+    status: "reserved",
     start: SALE_START_DATE,
     end: SALE_END_DATE,
     note: "",
@@ -231,11 +241,12 @@ function loadState() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "");
     const migrateLegacySalePrices = saved.recommendationVersion !== RECOMMENDATION_VERSION;
     const migrateDateRange = saved.dateRangeVersion !== DATE_RANGE_VERSION;
+    const migrateStatuses = saved.statusVersion !== STATUS_VERSION;
     return {
       info: { ...baseInfo, ...(saved.info || {}) },
       items: items.map((item) => ({
         ...item,
-        ...pickItemEdits((saved.items || {})[item.id], item, migrateLegacySalePrices, migrateDateRange),
+        ...pickItemEdits((saved.items || {})[item.id], item, migrateLegacySalePrices, migrateDateRange, migrateStatuses),
       })),
     };
   } catch {
@@ -252,6 +263,7 @@ function pickItemEdits(
   baseItem = {},
   migrateLegacySalePrices = false,
   migrateDateRange = false,
+  migrateStatuses = false,
 ) {
   const edits = Object.fromEntries(
     ITEM_EDITABLE_FIELDS.filter((key) => Object.prototype.hasOwnProperty.call(savedItem, key)).map((key) => [
@@ -269,6 +281,12 @@ function pickItemEdits(
     delete edits.start;
     delete edits.end;
   }
+  if (!STATUSES.includes(edits.status)) {
+    delete edits.status;
+  }
+  if (migrateStatuses && LEGACY_DEFAULT_STATUSES[baseItem.id]?.includes(edits.status)) {
+    delete edits.status;
+  }
   if (edits.image && !String(edits.image).startsWith("data:")) {
     delete edits.image;
   }
@@ -283,6 +301,7 @@ function persist() {
   const saved = {
     recommendationVersion: RECOMMENDATION_VERSION,
     dateRangeVersion: DATE_RANGE_VERSION,
+    statusVersion: STATUS_VERSION,
     info: { ...state.info },
     items: Object.fromEntries(state.items.map((item) => [item.id, pickItemEdits(item)])),
   };
@@ -361,12 +380,12 @@ function renderGallery() {
       }
 
       const statusButton = node.querySelector(".status-toggle");
-      statusButton.textContent = item.status === "sold" ? "Sold" : "Available";
+      statusButton.textContent = STATUS_LABELS[item.status] || STATUS_LABELS.available;
       statusButton.disabled = !IS_EDITABLE;
       if (IS_EDITABLE) {
         statusButton.addEventListener("click", () => {
           const current = state.items.find((entry) => entry.id === item.id)?.status || "available";
-          const next = current === "sold" ? "available" : "sold";
+          const next = STATUSES[(STATUSES.indexOf(current) + 1) % STATUSES.length] || STATUSES[0];
           updateItem(item.id, { status: next });
           renderGallery();
         });
@@ -403,6 +422,7 @@ function updateItem(id, patch) {
 function updateSummary() {
   document.getElementById("totalCount").textContent = state.items.length;
   document.getElementById("availableCount").textContent = state.items.filter((item) => item.status === "available").length;
+  document.getElementById("reservedCount").textContent = state.items.filter((item) => item.status === "reserved").length;
   document.getElementById("soldCount").textContent = state.items.filter((item) => item.status === "sold").length;
 }
 

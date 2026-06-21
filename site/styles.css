@@ -9,6 +9,8 @@
   --callout: #fbf2d9;
   --available-bg: #e7f3ec;
   --available-text: #2f6b47;
+  --reserved-bg: #fff2c2;
+  --reserved-text: #87610f;
   --sold-bg: #f0e5e3;
   --sold-text: #8b3f35;
   --accent: #3467d6;
@@ -234,7 +236,7 @@ h2 {
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 16px;
   border-top: 1px solid var(--line);
@@ -351,6 +353,11 @@ h2 {
 .item-card[data-status="available"] .status-toggle {
   background: var(--available-bg);
   color: var(--available-text);
+}
+
+.item-card[data-status="reserved"] .status-toggle {
+  background: var(--reserved-bg);
+  color: var(--reserved-text);
 }
 
 .item-card[data-status="sold"] .status-toggle {
