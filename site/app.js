@@ -24,7 +24,7 @@ const items = [
     title: "Midea 5,000 BTU EasyCool Window Air Conditioner",
     image: "./assets/midea_ac.jpg",
     amazonPrice: "$179.99",
-    salePrice: "$90",
+    salePrice: "$72",
     amazonUrl: "https://www.amazon.com/dp/B085797ZFF",
     match: "Purchased item; original list price",
     status: "available",
@@ -37,33 +37,33 @@ const items = [
     title: "Dell 27 Plus QHD Monitor - S2725DSM (Used, 1 of 2)",
     image: "./assets/dell_s2725dsm.png",
     amazonPrice: "$189.99",
-    salePrice: "$120",
+    salePrice: "$126",
     amazonUrl: "https://www.dell.com/en-us/shop/dell-27-plus-qhd-monitor-s2725dsm/apd/210-btgm/computer-monitors",
     match: "Purchased item; used; quantity 2",
     status: "available",
     start: SALE_START_DATE,
     end: SALE_END_DATE,
-    note: "",
+    note: "original packaging is complete",
   },
   {
     id: "dell_monitor_2",
     title: "Dell 27 Plus QHD Monitor - S2725DSM (Used, 2 of 2)",
     image: "./assets/dell_s2725dsm.png",
     amazonPrice: "$189.99",
-    salePrice: "$125",
+    salePrice: "$126",
     amazonUrl: "https://www.dell.com/en-us/shop/dell-27-plus-qhd-monitor-s2725dsm/apd/210-btgm/computer-monitors",
     match: "Purchased item; used; quantity 2",
     status: "available",
     start: SALE_START_DATE,
     end: SALE_END_DATE,
-    note: "",
+    note: "original packaging is complete",
   },
   {
     id: "microwave",
     title: "Countertop Microwave, Black/Stainless, Similar to Hamilton Beach",
     image: "./assets/microwave.jpg",
     amazonPrice: "$109.98",
-    salePrice: "$45",
+    salePrice: "$40",
     amazonUrl: "https://www.amazon.com/dp/B07HG9Y3VL",
     match: "Similar Amazon item; exact Hamilton Beach listing did not show a normal current price",
     status: "available",
@@ -89,7 +89,7 @@ const items = [
     title: "HUMSURE 9L Ultrasonic Cool Mist Humidifier",
     image: "./assets/humsure_humidifier.jpg",
     amazonPrice: "$145.99",
-    salePrice: "$50",
+    salePrice: "$35",
     amazonUrl:
       "https://www.walmart.com/ip/HUMSURE-Humidifier-Suitable-For-Large-Room-2-4gal-9L-Bedroom-Silent-Humidifier-3-Speed-Ultrasonic-Cool-Mist-Timer-Aromatherapy-Cotton-Remote-Control/2325467750",
     match: "Purchased item from Walmart; original price",
@@ -103,7 +103,7 @@ const items = [
     title: "BREEZOME 6L Humidifier and Essential Oil Diffuser",
     image: "./assets/breezome_humidifier.jpg",
     amazonPrice: "$49.99",
-    salePrice: "$20",
+    salePrice: "$15",
     amazonUrl: "https://www.amazon.com/dp/B0CRD8CRC2",
     match: "Purchased item; original list price",
     status: "available",
@@ -116,7 +116,7 @@ const items = [
     title: "OSTBA Electric Deli Meat Slicer, 200W",
     image: "./assets/slicer.jpg",
     amazonPrice: "$124.99",
-    salePrice: "$55",
+    salePrice: "$40",
     amazonUrl: "https://www.amazon.com/dp/B07TSDQB33",
     match: "Purchased item",
     status: "available",
@@ -129,7 +129,7 @@ const items = [
     title: "GOVNPJ 3L Electric Shabu Shabu Hot Pot",
     image: "./assets/hot_pot.jpg",
     amazonPrice: "N/A",
-    salePrice: "$20",
+    salePrice: "$15",
     amazonUrl: "https://www.amazon.com/dp/B09YH3NZMC",
     match: "Purchased item; original/list price unavailable",
     status: "available",
@@ -155,7 +155,7 @@ const items = [
     title: "Red Ceramic Moroccan Tagine Pot",
     image: "./assets/tagine.jpg",
     amazonPrice: "$76.95",
-    salePrice: "$35",
+    salePrice: "$25",
     amazonUrl: "https://www.amazon.com/dp/B07V5P6PCN",
     match: "Similar Amazon item",
     status: "available",
@@ -168,7 +168,7 @@ const items = [
     title: "Instant Pot Duo Plus 9-in-1 Multicooker, 6 Quart",
     image: "./assets/instant_pot.jpg",
     amazonPrice: "$139.99",
-    salePrice: "$60",
+    salePrice: "$45",
     amazonUrl: "https://www.amazon.com/dp/B01NBKTPTS",
     match: "Purchased item; original list price",
     status: "available",
@@ -181,7 +181,7 @@ const items = [
     title: "Nuwave Brio 8-Qt Air Fryer with Smart Thermometer",
     image: "./assets/nuwave.jpg",
     amazonPrice: "$159.99",
-    salePrice: "$65",
+    salePrice: "$55",
     amazonUrl: "https://www.amazon.com/dp/B089NKT312",
     match: "Purchased item; selected color unavailable, original price from other colors",
     status: "available",
@@ -194,7 +194,7 @@ const items = [
     title: "Upstreman UAK-06C Portable Air Conditioner",
     image: "./assets/portable_ac.jpg",
     amazonPrice: "$219.96",
-    salePrice: "$130",
+    salePrice: "$108",
     amazonUrl: "https://www.amazon.com/dp/B0GST71ZLV",
     match: "Similar Amazon item; photo label shows 10,000 BTU / 6,000 SACC",
     status: "available",
@@ -207,7 +207,7 @@ const items = [
     title: "Alienware / Vertagear Gaming Chair",
     image: "./assets/chair.jpg",
     amazonPrice: "$419.99",
-    salePrice: "$150",
+    salePrice: "$120",
     amazonUrl: "https://www.amazon.com/dp/B0B8GG7Z8J",
     match: "Same brand, similar item; Alienware edition did not show a current Amazon price",
     status: "available",
@@ -455,8 +455,41 @@ function setupImportExport() {
   });
 }
 
+function setupLocalSync() {
+  if (!IS_EDITABLE) return;
+  const titleRow = document.querySelector(".title-row");
+  if (!titleRow) return;
+
+  const actions = document.createElement("div");
+  actions.className = "local-sync-actions";
+
+  const copyButton = document.createElement("button");
+  copyButton.className = "local-sync-button";
+  copyButton.type = "button";
+  copyButton.textContent = "Copy sync data";
+
+  copyButton.addEventListener("click", async () => {
+    const data = localStorage.getItem(STORAGE_KEY) || JSON.stringify({ items: {} });
+    try {
+      await navigator.clipboard.writeText(data);
+      copyButton.textContent = "Copied";
+    } catch {
+      const box = document.createElement("textarea");
+      box.value = data;
+      box.className = "sync-data-box";
+      actions.appendChild(box);
+      box.select();
+      copyButton.textContent = "Copy from box";
+    }
+  });
+
+  actions.appendChild(copyButton);
+  titleRow.appendChild(actions);
+}
+
 renderInfo();
 setupFilters();
 setupImportExport();
+setupLocalSync();
 renderGallery();
 updateSummary();

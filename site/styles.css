@@ -53,6 +53,31 @@ input {
   gap: 24px;
 }
 
+.local-sync-actions {
+  flex: 0 0 auto;
+}
+
+.local-sync-button {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.local-sync-button:hover {
+  background: #f4f4f2;
+}
+
+.sync-data-box {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+}
+
 h1 {
   min-width: 0;
   max-width: 760px;
