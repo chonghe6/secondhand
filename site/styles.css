@@ -89,6 +89,35 @@ h1 {
   outline: none;
 }
 
+.sale-info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.sale-info > div {
+  min-width: 0;
+}
+
+.info-label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.sale-info strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 680;
+}
+
 h2 {
   margin: 0;
   font-size: 24px;
@@ -462,6 +491,10 @@ input[readonly] {
   }
 
   .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .sale-info {
     grid-template-columns: 1fr;
   }
 
