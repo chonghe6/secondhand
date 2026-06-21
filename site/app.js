@@ -64,8 +64,8 @@ const items = [
     amazonUrl: "https://www.dell.com/en-us/shop/dell-27-plus-qhd-monitor-s2725dsm/apd/210-btgm/computer-monitors",
     match: "Purchased item; used; quantity 2",
     status: "available",
-    start: SALE_START_DATE,
-    end: SALE_END_DATE,
+    start: "2026-10-01",
+    end: "2026-10-15",
     note: "original packaging is complete",
   },
   {
@@ -208,8 +208,8 @@ const items = [
     amazonUrl: "https://www.amazon.com/dp/B0GST71ZLV",
     match: "Similar Amazon item; photo label shows 10,000 BTU / 6,000 SACC",
     status: "reserved",
-    start: SALE_START_DATE,
-    end: SALE_END_DATE,
+    start: "2026-07-17",
+    end: "2026-07-20",
     note: "",
   },
   {
@@ -221,8 +221,8 @@ const items = [
     amazonUrl: "https://www.amazon.com/dp/B0B8GG7Z8J",
     match: "Same brand, similar item; Alienware edition did not show a current Amazon price",
     status: "available",
-    start: SALE_START_DATE,
-    end: SALE_END_DATE,
+    start: "2026-07-17",
+    end: "2026-07-20",
     note: "",
   },
 ];
